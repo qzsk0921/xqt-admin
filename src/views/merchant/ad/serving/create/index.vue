@@ -18,13 +18,10 @@
                 </el-radio> -->
                 <el-cascader
                     placeholder="请选择:"
-                    expand-trigger="hover"
                     :options="form.adOptions"
-                    props.value="title"
-                    label="title"
-                    children="list"
+                    :props="adOptionProps"
                     change-on-select
-                    @change="handleAreaTagsClose">
+                    @change="handleAdCascaderChange">
                 </el-cascader>
             </el-form-item>
             <el-form-item label="用户性别">
@@ -164,15 +161,23 @@
             return {
                 // targetType: this.$store.state.user.currentClub.target_type,
                 // targetId: this.$store.state.user.currentClub.target_id,
+                targetId: null,
+                targetType: null,
                 picTxtAdShow: false,
                 areaTagsCache: {},
                 adTypeCheckList: [],
                 promotionCheckList:[],
                 adPreviewImgUrl: '',
                 areaType: '',
+                adOptionProps: {
+                    value: 'title',
+                    label: 'title',
+                    children: 'list'
+                },
+                // currentAdOptionObj: {},
                 form: {
                     name: '',
-                    type: '1',
+                    // type: '1',
                     checkAll: false,
                     checkedSex: ['男'],
                     adOptions: [], //广告服务类型
@@ -212,17 +217,16 @@
         },
         created: function () {
             this.handleGetTargetType()
-            this.handleGetCityBlock()
             this.handleGetAdType() //获取广告服务
             this.getSttIdMehtod()
             console.log(this.form.areaTags.length)
         },
         methods: {
-            handleTargetTypeChange(v){
-                this.form.type = v.name
-                this.areaType = v.area_type
-                this.handleGetCityBlock();
-            },
+            // handleTargetTypeChange(v){
+            //     this.form.type = v.name
+            //     this.areaType = v.area_type
+            //     this.handleGetCityBlock();
+            // },
             handleGetCityBlock () {
                 getCityBlock({target_id: this.targetId, target_type: this.targetType})
                     .then(res => {
@@ -247,7 +251,6 @@
                     console.log(res)
                     if (res.result == 1) {
                         this.form.adOptions = res.data
-                        // this.form.adOptions.push(res.data)
                     }
                 })
             },
@@ -287,6 +290,36 @@
                         message: errors
                     })
                 })
+            },
+            handleAdCascaderChange (item) {
+
+                let myAdOptions = this.form.adOptions
+
+                let adObj = item.map((v, i) => {
+
+                    for (let itm of myAdOptions) {
+                        if (itm.title == v) {
+                            
+                            if (itm.list.length > 0) {
+
+                                myAdOptions = itm.list
+                            }
+
+                            return itm
+                        }
+                    }
+                    return null
+                })
+
+                if (adObj[1]) {
+                    this.targetId = adObj[1].target_id
+                    this.targetType = adObj[1].target_type
+                    this.handleGetCityBlock()
+                }
+                // this.handleGetCityBlock()
+                // let res = this.getCascaderObj(val, this.form.options),//this.getCascaderObj(val, address),
+                //     length = res.length;
+                // this.areaTagsCache =  {area_name: res[length - 1]['label'], area_id: res[length - 1]['value']}
             },
             handleAdTypeChange (item) {
                 item.forEach((val, i) => {
@@ -390,7 +423,7 @@
                     console.log(erros)
                 })
             },
-            handleAreaCascaderChange(val){
+            handleAreaCascaderChange (val) {
                 let res = this.getCascaderObj(val, this.form.options),//this.getCascaderObj(val, address),
                     length = res.length;
                 this.areaTagsCache =  {area_name: res[length - 1]['label'], area_id: res[length - 1]['value']}
@@ -425,11 +458,13 @@
                     }
                 })
             },
-            getCascaderObj(val,opt) {
+            getCascaderObj (val,opt) {
                 return val.map(function (value, index, array) {
                     for (var itm of opt) {
                         if (itm.value == value) {
-                            opt = itm.children; return itm;
+                            opt = itm.children
+                            
+                            return itm
                         }
 
                     }

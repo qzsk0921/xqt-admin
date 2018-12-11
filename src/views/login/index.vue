@@ -160,7 +160,7 @@ export default {
                 break;
         }
 
-        this.loginForm.username = this.localUserName(tabs.label)
+        // this.loginForm.username = this.localUserName(tabs.label)
       }
   }
 }
