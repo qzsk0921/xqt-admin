@@ -26,12 +26,42 @@
         </div>
         <el-row class="table-container">
             <el-table
-                    :data="tableData"
-                    @row-click="rowClick"
-                    >
-                <el-table-column
+                :data="tableData"
+                @row-click="rowClick"
+                >
+                <!-- <el-table-column
                         prop="ad_name"
                         label="投放名称"
+                        height="54px"
+                        class-name="table-column"
+                        label-class-name="label-name"
+                        >
+                </el-table-column>
+                <el-table-column
+                        prop="status_name"
+                        label="广告状态"
+                        height="54px"
+                        class-name="table-column"
+                        label-class-name="label-name"
+                        >
+                    <template slot-scope="scope">
+                        <span v-if="scope.row.status === 1">{{scope.row.status_name}}</span>
+                        <span class="review" v-else-if="scope.row.status === 2">{{scope.row.status_name}}</span>
+                        <span v-else-if="scope.row.status === 3">{{scope.row.status_name}}</span>
+                        <span class="over" v-else="scope.row.status === 4">{{scope.row.status_name}}</span>
+                    </template>
+                </el-table-column> -->
+                <el-table-column
+                        prop="ad_name"
+                        label="推广名称"
+                        height="54px"
+                        class-name="table-column"
+                        label-class-name="label-name"
+                        >
+                </el-table-column>
+                <el-table-column
+                        prop="ad_name"
+                        label="服务类型"
                         height="54px"
                         class-name="table-column"
                         label-class-name="label-name"

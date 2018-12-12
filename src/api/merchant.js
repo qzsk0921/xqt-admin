@@ -154,16 +154,16 @@ export function updateAd(params) {
 }
 
 
-/**
- *  获取服务类型
- */
-export function getTargetType(params) {
-    return request({
-        url: '/admin/tong-ad/get-target-type',
-        method: 'get',
-        params: {...params}
-    })
-}
+// /**
+//  *  获取服务类型
+//  */
+// export function getTargetType(params) {
+//     return request({
+//         url: '/admin/tong-target/get-target-type',
+//         method: 'get',
+//         params: {...params}
+//     })
+// }
 
 
 
@@ -259,7 +259,7 @@ export function getCityBlock(params) {
  
 export function getAdType(params) {
     return new request({
-        url: '/admin/tong-ad/get-target-type',
+        url: '/admin/tong-target/get-target-type',
         method: 'get',
         params: {...params}
     })

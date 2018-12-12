@@ -71,9 +71,9 @@ export function createAgent(params) {
 export function getClubInfo(params) {
 
     return request({
-        url: '/admin/tong-merchant/get-club',
-        method: 'post',
-        data: {...params}
+        url: '/admin/tong-merchant/get-user',
+        method: 'get',
+        params: {...params}
     })
 }
 

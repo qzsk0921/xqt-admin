@@ -216,7 +216,7 @@
             }
         },
         created: function () {
-            this.handleGetTargetType()
+            // this.handleGetTargetType()
             this.handleGetAdType() //获取广告服务
             this.getSttIdMehtod()
             console.log(this.form.areaTags.length)
@@ -254,17 +254,17 @@
                     }
                 })
             },
-            handleGetTargetType () {
-                getTargetType({target_id: this.targetId, target_type: this.targetType}).then(res => {
-                    if (res.result == 1) {
-                        this.form.targetType = res.data
-                        this.form.type = res['data'][0]['name']
-                        this.areaType = res['data'][0]['area_type']
-                    }
-                }).catch(errors => {
-                    console.log(errors)
-                })
-            },
+            // handleGetTargetType () {
+            //     getTargetType({target_id: this.targetId, target_type: this.targetType}).then(res => {
+            //         if (res.result == 1) {
+            //             this.form.targetType = res.data
+            //             this.form.type = res['data'][0]['name']
+            //             this.areaType = res['data'][0]['area_type']
+            //         }
+            //     }).catch(errors => {
+            //         console.log(errors)
+            //     })
+            // },
             getTargetTemplage (sttId) {
                 getClubTags({
                     target_id: this.targetId,
@@ -295,6 +295,11 @@
 
                 let myAdOptions = this.form.adOptions
 
+                if (item.length === 1 || item.length === 3) {
+                    this.$message({type: 'warning', message: '请选择具体类型'})
+                    return false
+                }
+
                 let adObj = item.map((v, i) => {
 
                     for (let itm of myAdOptions) {
@@ -310,7 +315,7 @@
                     }
                     return null
                 })
-
+                console.log(adObj)
                 if (adObj[1]) {
                     this.targetId = adObj[1].target_id
                     this.targetType = adObj[1].target_type

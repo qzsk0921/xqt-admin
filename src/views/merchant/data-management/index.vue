@@ -32,15 +32,25 @@
             </div>
         </div><!--value-format="timestamp"-->
         <div class="chart-div">
-            <el-row class="chart-search-row">
-                <el-date-picker
+            <div class="chart-search-row chart-select-row">
+                <div class="date-picker-box">
+                    <el-date-picker
                         v-model="chartSearchDate"
                         value-format="yyyy-MM-dd"
                         type="date"
                         placeholder="选择日期">
-                </el-date-picker>
-                <el-button type="primary" @click="lineChartSearch">查询</el-button>
-            </el-row>
+                    </el-date-picker>
+                    <el-button type="primary" @click="lineChartSearch">查询</el-button>                    
+                </div>
+                <el-select v-model="value" placeholder="请选择">
+                    <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
             <div id="line-chart" :style="{width: '100%', height: '416px'}"></div>
         </div>
         <div class="tables-div">
@@ -103,7 +113,24 @@
                     begin_create_time: '',
                     end_create_time: '',
                     page: 1
-                }
+                },
+                options: [{
+                  value: '选项1',
+                  label: '黄金糕'
+                }, {
+                  value: '选项2',
+                  label: '双皮奶'
+                }, {
+                  value: '选项3',
+                  label: '蚵仔煎'
+                }, {
+                  value: '选项4',
+                  label: '龙须面'
+                }, {
+                  value: '选项5',
+                  label: '北京烤鸭'
+                }],
+                value: ''
             }
         },
         created: function () {
@@ -246,11 +273,12 @@
                     }
                 }
 
-
             }
 
             .left{
+
                 .item{
+
                     &:nth-of-type(1){
                         @extend .t;
                     }
@@ -263,7 +291,9 @@
             }
 
             .right{
+
                 .item{
+
                     @extend .t;
                 }
 
@@ -274,7 +304,10 @@
         .chart-search-row{
             margin-bottom: 40px;
         }
-
+        .chart-select-row {
+            display: flex;
+            justify-content: space-between;
+        }
         .chart-div{
             box-sizing: border-box;
             padding: 50px 44px;

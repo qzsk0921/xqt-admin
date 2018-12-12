@@ -9,15 +9,15 @@
         <div class="content">
             <el-form ref="formEl" :rules="rules" :model="form" label-position="right" label-width="100px">
                 <div class="row">
-                    <el-form-item label="商家ID" prop="id">
-                        <el-input v-model="form.id"  placeholder="请输入商家ID" @blur="handleSearchAgent"></el-input>
+                    <el-form-item label="合拍ID" prop="id">
+                        <el-input v-model="form.id"  placeholder="请输入个人ID或商家ID" @blur="handleSearchAgent"></el-input>
                     </el-form-item>
-                    <el-form-item label="商家名称" prop="name">
+                    <el-form-item label="名称" prop="name">
                         <el-input v-model="form.name" placeholder="请输入商家名称"></el-input>
                     </el-form-item>
                 </div>
 
-                <div class="row">
+                <!-- <div class="row">
                     <el-form-item label="联系电话" prop="mobileNum">
                         <el-input v-model="form.mobileNum"  placeholder="请输入联系电话"></el-input>
                     </el-form-item>
@@ -45,7 +45,7 @@
                             <div slot="tip" class="el-upload__tip">注意：图片大小建议：750*220，格式为jpg/png/jepg，图片大小不可大于1M</div>
                         </el-upload>
                     </el-form-item>
-                </div>
+                </div> -->
                 <el-row class="commit-button"><el-button type="primary" @click="create('formEl')">完成</el-button></el-row>
             </el-form>
         </div>
@@ -54,7 +54,7 @@
 
 <script>
     import { uploadImage } from "../../../../api/common";
-    import { createAgent, getClubInfo } from "../../../../api/agent";
+    import { createAgent, getClubInfo } from "@/api/agent";
 
 
     export default {
@@ -64,11 +64,11 @@
                 form: {
                     id: '',
                     name: '',
-                    mobileNum: '',
-                    address: '',
-                    linkman: '',
-                    businessLicensePicUrl: '',
-                    businessLicensePicPath: '',
+                    // mobileNum: '',
+                    // address: '',
+                    // linkman: '',
+                    // businessLicensePicUrl: '',
+                    // businessLicensePicPath: '',
                 },
                 rules: {
                     id: [
@@ -77,18 +77,18 @@
                     name:[
                         { required: true, message: '请输入商家名称', trigger: 'blur' },
                     ],
-                    mobileNum:[
-                        { required: true, message: '请输入联系电话', trigger: 'blur' },
-                    ],
-                    address: [
-                        { required: true, message: '请输入联系地址', trigger: 'blur' },
-                    ],
-                    linkman: [
-                        { required: true, message: '请输入业务联系人', trigger: 'blur' },
-                    ],
-                    businessLicensePicPath: [
-                        { type: 'string', required: true, message: '请上传营业执照', trigger: 'blur' },
-                    ]
+                    // mobileNum:[
+                    //     { required: true, message: '请输入联系电话', trigger: 'blur' },
+                    // ],
+                    // address: [
+                    //     { required: true, message: '请输入联系地址', trigger: 'blur' },
+                    // ],
+                    // linkman: [
+                    //     { required: true, message: '请输入业务联系人', trigger: 'blur' },
+                    // ],
+                    // businessLicensePicPath: [
+                    //     { type: 'string', required: true, message: '请上传营业执照', trigger: 'blur' },
+                    // ]
                 }
             }
         },
@@ -98,11 +98,11 @@
                     if (valid) {
                         let formData = this.form
                         let params = {
-                            target_id: formData.id,
-                            mobile: formData.mobileNum,
-                            linkman: formData.linkman,
-                            license: formData.businessLicensePicPath,
-                            merchant_address: formData.address,
+                            user_id: formData.id,
+                            // mobile: formData.mobileNum,
+                            // linkman: formData.linkman,
+                            // license: formData.businessLicensePicPath,
+                            // merchant_address: formData.address,
                         }
                         createAgent(params).then(res => {
                             this.$message(res.msg)
@@ -123,9 +123,11 @@
                 this.$refs[formName].resetFields();
             },
             handleSearchAgent () {
-                getClubInfo({target_id: this.form.id}).then(res => {
+
+                getClubInfo({user_id: this.form.id, type: 1}).then(res => {
+                    
                     if (res.result == 1) {
-                        this.form.name = res.data.name
+                        this.form.name = res.data.user_nickname
                     } else {
                         this.$message(res.msg)
                     }

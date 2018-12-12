@@ -10,7 +10,7 @@
             <el-button type="primary" @click="create">新建商家</el-button>
             <el-row class="ad-head-right">
                 <el-input
-                    placeholder="商家名称"
+                    placeholder="搜索商家名称、商家ID"
                     prefix-icon="el-icon-search"
                     v-model="searchValue">
                 </el-input>
@@ -26,7 +26,7 @@
             >
                 <el-table-column
                     prop="merchant_name"
-                    label="商家名称"
+                    label="名称"
                     height="54px"
                     class-name="table-column"
                     label-class-name="label-name"
@@ -34,13 +34,13 @@
                 </el-table-column>
                 <el-table-column
                     prop="user_id"
-                    label="商家ID"
+                    label="合拍ID"
                     height="54px"
                     class-name="table-column"
                     label-class-name="label-name"
                 >
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                     prop="status_name"
                     label="兴趣通服务"
                     height="54px"
@@ -52,9 +52,8 @@
                         <span class="review" v-else-if="scope.row.status === 2">{{scope.row.status_name}}</span>
                         <span class="" v-else-if="scope.row.status === 3">{{scope.row.status_name}}</span>
                         <span class="over" v-else="scope.row.status === 4">{{scope.row.status_name}}</span>
-                        <!--<span>{{scope.row}}</span>-->
                     </template>
-                </el-table-column>
+                </el-table-column> -->
             </el-table>
         </el-row>
         <el-row class="pagination">

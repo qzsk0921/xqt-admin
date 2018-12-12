@@ -54,7 +54,7 @@
         },
         methods: {
             handleSearchAgent () {
-                getClubByAgent({target_id: this.form.id}).then(res => {
+                getClubByAgent({user_id: this.form.id}).then(res => {
                     if (res.result == 1) {
                         this.form.name = res.data.name
                     }
@@ -72,7 +72,7 @@
                     });
                     return false;
                 } else {
-                    agentUnbind({target_id: this.form.id, unbind_text: this.form.content}).then(res => {
+                    agentUnbind({user_id: this.form.id, unbind_text: this.form.content, type: 2}).then(res => {
                         if(res.result == 1) {
                             this.terminationID = this.form.id
                             this.$alert(res.msg, '提示', {
