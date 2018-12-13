@@ -83,8 +83,6 @@ export function getAdsum(params) {
  *  @param ad_id
  *  @param begin_create_time
  *  @param end_create_time
- *  @param page
- *  @param per-page
  */
 export function getLineChartData(params) {
     return request({
@@ -256,7 +254,7 @@ export function getCityBlock(params) {
  * @apiParam {int} target_id
  * @apiParam {int} target_type
  */
- 
+
 export function getAdType(params) {
     return new request({
         url: '/admin/tong-target/get-target-type',
