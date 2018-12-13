@@ -60,7 +60,7 @@
                         >
                 </el-table-column>
                 <el-table-column
-                        prop="ad_name"
+                        prop="type_name"
                         label="服务类型"
                         height="54px"
                         class-name="table-column"

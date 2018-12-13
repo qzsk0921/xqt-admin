@@ -13,7 +13,7 @@
                         <el-input v-model="form.id"  placeholder="请输入个人ID或商家ID" @blur="handleSearchAgent"></el-input>
                     </el-form-item>
                     <el-form-item label="名称" prop="name">
-                        <el-input v-model="form.name" placeholder="请输入商家名称"></el-input>
+                        <el-input v-model="form.name" placeholder="请输入商家名称" disabled></el-input>
                     </el-form-item>
                 </div>
 
@@ -126,12 +126,11 @@
 
                 getClubInfo({user_id: this.form.id, type: 1}).then(res => {
                     
-                    if (res.result == 1) {
+                    if (res.result === 1) {
                         this.form.name = res.data.user_nickname
                     } else {
-                        this.$message(res.msg)
+                        this.form.name = ''
                     }
-
 
                 }).catch(error => {
                     console.log(error)

@@ -40,9 +40,13 @@
                         type="date"
                         placeholder="选择日期">
                     </el-date-picker>
-                    <el-button type="primary" @click="lineChartSearch">查询</el-button>                    
+                    <el-button type="primary" @click="lineChartSearch">查询</el-button>
                 </div>
-                <el-select v-model="value" placeholder="请选择">
+                <el-select
+                    v-model="chartSelectType"
+                    placeholder="请选择"
+                    clearable
+                    @change="chartSelectChange">
                     <el-option
                       v-for="item in options"
                       :key="item.value"
@@ -54,17 +58,31 @@
             <div id="line-chart" :style="{width: '100%', height: '416px'}"></div>
         </div>
         <div class="tables-div">
-            <el-row class="chart-search-row">
-                <el-date-picker
-                        v-model="tableSearchDate"
-                        value-format="yyyy-MM-dd"
-                        type="daterange"
-                        range-separator="-"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期">
-                </el-date-picker>
-                <el-button type="primary" @click="tableSearch">查询</el-button>
-            </el-row>
+            <div class="chart-search-row chart-select-row">
+                <div class="date-picker-box">
+                    <el-date-picker
+                            v-model="tableSearchDate"
+                            value-format="yyyy-MM-dd"
+                            type="daterange"
+                            range-separator="-"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期">
+                    </el-date-picker>
+                    <el-button type="primary" @click="tableSearch">查询</el-button>
+                </div>
+                <el-select
+                    v-model="tableSelectType"
+                    placeholder="请选择"
+                    clearable
+                    @change="tableSelectChange">
+                    <el-option
+                      v-for="item in options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
             <el-table
                     :data="tableData"
                     style="width: 100%">
@@ -96,7 +114,7 @@
 </template>
 
 <script>
-    import { getAdsum, getConsumptionInfo , getLineChartData} from '@/api/merchant.js'
+    import { getAdsum, getTopAdType, getConsumptionInfo , getLineChartData} from '@/api/merchant.js'
     export default {
         name: "index",
         data: function () {
@@ -107,42 +125,58 @@
                 paginationTotal: 1,
                 lineChartData: '',
                 tableData: [],
+                quantitySearch: {
+                    target_type: '',
+                    search: '',
+                    // merchant_id: '',
+                    begin_create_time: ''
+                },
                 consumptionSearch: {
+                    target_type: '',
                     search: '',
                     merchant_id: '',
                     begin_create_time: '',
                     end_create_time: '',
                     page: 1
                 },
-                options: [{
-                  value: '选项1',
-                  label: '黄金糕'
-                }, {
-                  value: '选项2',
-                  label: '双皮奶'
-                }, {
-                  value: '选项3',
-                  label: '蚵仔煎'
-                }, {
-                  value: '选项4',
-                  label: '龙须面'
-                }, {
-                  value: '选项5',
-                  label: '北京烤鸭'
-                }],
-                value: ''
+                // options: [{
+                //   value: '1',
+                //   label: '黄金糕'
+                // }, {
+                //   value: '2',
+                //   label: '双皮奶'
+                // }, {
+                //   value: '3',
+                //   label: '蚵仔煎'
+                // }, {
+                //   value: '4',
+                //   label: '龙须面'
+                // }, {
+                //   value: '5',
+                //   label: '北京烤鸭'
+                // }],
+                options: [],
+                chartSelectType: '',
+                tableSelectType: ''
             }
         },
         created: function () {
-
+            //商家广告汇总数据
             getAdsum().then(res => {
                 this.overViewData = res.data
             }).catch(error => {
                 console.log(error)
             })
-
-            this.getLineChart()
-
+            // 获取顶端服务类型
+            getTopAdType().then(res => {
+                console.log(res)
+                this.options.push(res.data)
+            }).catch(error => {
+                console.log(error)
+            })
+            // echart数据
+            this.getLineChart(this.quantitySearch)
+            // 消费数据
             this.getConsumption(this.consumptionSearch)
 
         },
@@ -198,15 +232,22 @@
                 })
             },
             lineChartSearch () {
-                this.getLineChart({
-                    search: 1,
-                    begin_create_time: this.chartSearchDate,
-                })
+                if (!this.chartSelectType && !this.chartSearchDate) {
+                    this.quantitySearch.search = ''
+                } else {
+                    this.quantitySearch.search = 1
+                    this.quantitySearch.begin_create_time = this.chartSearchDate
+                }
+                this.getLineChart(this.quantitySearch)
             },
-            tableSearch() {
-                this.consumptionSearch.search = 1
-                this.consumptionSearch.begin_create_time = this.tableSearchDate[0]
-                this.consumptionSearch.end_create_time = this.tableSearchDate[1]
+            tableSearch () {
+                if (!this.tableSelectType && !this.tableSearchDate[0]) {
+                    this.consumptionSearch.search = ''
+                } else {
+                    this.consumptionSearch.search = 1
+                    this.consumptionSearch.begin_create_time = this.tableSearchDate[0]
+                    this.consumptionSearch.end_create_time = this.tableSearchDate[1]
+                }
 
                 console.log(this.consumptionSearch)
                 this.getConsumption(this.consumptionSearch)
@@ -218,7 +259,27 @@
                 }).catch(errors => {
                     console.log(errors)
                 })
+            },
+            chartSelectChange (val) {
+                this.quantitySearch.target_type = val
+                if (!val && !this.chartSearchDate) {
+                    this.quantitySearch.search = ''
+                } else {
+                    this.quantitySearch.search = 1
+                }
+                this.getLineChart(this.quantitySearch)
+            },
+            tableSelectChange (val) {
+                this.consumptionSearch.target_type = val
+                if (!val && !this.tableSearchDate) {
+                    this.consumptionSearch.search = ''
+                } else {
+                    this.consumptionSearch.search = 1
+                }
+                
+                this.getConsumption(this.consumptionSearch)
             }
+
         },
 
     }
