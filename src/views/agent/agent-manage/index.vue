@@ -15,9 +15,7 @@
                     v-model="searchValue">
                 </el-input>
                 <el-button type="primary" @click="search">查询</el-button>
-
             </el-row>
-
         </div>
         <el-row class="table-container">
             <el-table
@@ -35,6 +33,14 @@
                 <el-table-column
                     prop="user_id"
                     label="合拍ID"
+                    height="54px"
+                    class-name="table-column"
+                    label-class-name="label-name"
+                >
+                </el-table-column>
+                <el-table-column
+                    prop="status_name"
+                    label="状态"
                     height="54px"
                     class-name="table-column"
                     label-class-name="label-name"
@@ -98,8 +104,9 @@
         },
         methods: {
             rowClick (row) {
-
-                if (row.status == 4) return false;
+                // console.log(row)
+                // if (row.status == 1) return false
+                if (row.is_click === 0) return false
                 this.$router.push({ name: 'agent-detail', query: { id: row.id}})
             },
             create () {
@@ -108,7 +115,7 @@
             getList () {
                 return new Promise((resolve, reject) => {
                     getMerchantList(this.searchParams).then(response => {
-                        this.typeList = response.data.config_type
+                        // this.typeList = response.data.config_type
                         this.statusList = response.data.config_status
                         this.tableData = response.data.list
                         this.pagination = response.data.page

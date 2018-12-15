@@ -35,7 +35,7 @@
 </template>
 
 <script>
-    import {agentUnbind, getClubByAgent} from "../../../../api/agent";
+    import {agentUnbind, getClubByAgent, getClubInfo} from "../../../../api/agent";
 
     export default {
         name: "termination",
@@ -54,12 +54,23 @@
         },
         methods: {
             handleSearchAgent () {
-                getClubByAgent({user_id: this.form.id}).then(res => {
-                    if (res.result == 1) {
-                        this.form.name = res.data.name
+                // getClubByAgent({user_id: this.form.id}).then(res => {
+                //     if (res.result == 1) {
+                //         this.form.name = res.data.name
+                //     }
+
+                //     this.$message(res.msg)
+                // }).catch(error => {
+                //     console.log(error)
+                // })
+                getClubInfo({user_id: this.form.id, type: 2}).then(res => {
+                    
+                    if (res.result === 1) {
+                        this.form.name = res.data.user_nickname
+                    } else {
+                        this.form.name = ''
                     }
 
-                    this.$message(res.msg)
                 }).catch(error => {
                     console.log(error)
                 })

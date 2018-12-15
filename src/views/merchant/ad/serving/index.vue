@@ -140,6 +140,7 @@
             getList () {
                 return new Promise((resolve, reject) => {
                     getAdList(this.searchParams).then(response => {
+                        // config_sex
                         this.typeList = response.data.config_type
                         this.statusList = response.data.config_status
                         this.tableData = response.data.list

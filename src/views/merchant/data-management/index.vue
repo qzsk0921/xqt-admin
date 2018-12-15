@@ -139,22 +139,6 @@
                     end_create_time: '',
                     page: 1
                 },
-                // options: [{
-                //   value: '1',
-                //   label: '黄金糕'
-                // }, {
-                //   value: '2',
-                //   label: '双皮奶'
-                // }, {
-                //   value: '3',
-                //   label: '蚵仔煎'
-                // }, {
-                //   value: '4',
-                //   label: '龙须面'
-                // }, {
-                //   value: '5',
-                //   label: '北京烤鸭'
-                // }],
                 options: [],
                 chartSelectType: '',
                 tableSelectType: ''
@@ -169,8 +153,16 @@
             })
             // 获取顶端服务类型
             getTopAdType().then(res => {
-                console.log(res)
-                this.options.push(res.data)
+                // console.log(res)
+                res.data.forEach((v, i) => {
+                    let subOption = {
+                        value: '',
+                        label: ''
+                    }
+                    subOption['value'] = i
+                    subOption['label'] = v
+                    this.options.push(subOption)
+                })
             }).catch(error => {
                 console.log(error)
             })
@@ -224,14 +216,8 @@
 
                 eCharts.setOption(option)
             },
-            getConsumption (consumptionSearch) {
-                getConsumptionInfo(consumptionSearch).then(res => {
-                    this.tableData = res.data.list
-                }).catch(error => {
-                    console.log(error)
-                })
-            },
             lineChartSearch () {
+                // 按日期查询广告量
                 if (!this.chartSelectType && !this.chartSearchDate) {
                     this.quantitySearch.search = ''
                 } else {
@@ -241,6 +227,7 @@
                 this.getLineChart(this.quantitySearch)
             },
             tableSearch () {
+                // 按日期区间查询消费清单
                 if (!this.tableSelectType && !this.tableSearchDate[0]) {
                     this.consumptionSearch.search = ''
                 } else {
@@ -253,6 +240,7 @@
                 this.getConsumption(this.consumptionSearch)
             },
             getLineChart (params) {
+                // 获取广告量数据
                 getLineChartData(params).then(res => {
                     this.lineChartData = res.data
                     this.drawLineChart()
@@ -260,7 +248,16 @@
                     console.log(errors)
                 })
             },
+            getConsumption (consumptionSearch) {
+                //获取消费清单数据
+                getConsumptionInfo(consumptionSearch).then(res => {
+                    this.tableData = res.data.list
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
             chartSelectChange (val) {
+                // 按类型查询广告量
                 this.quantitySearch.target_type = val
                 if (!val && !this.chartSearchDate) {
                     this.quantitySearch.search = ''
@@ -270,6 +267,7 @@
                 this.getLineChart(this.quantitySearch)
             },
             tableSelectChange (val) {
+                // 按类型查询消费清单
                 this.consumptionSearch.target_type = val
                 if (!val && !this.tableSearchDate) {
                     this.consumptionSearch.search = ''

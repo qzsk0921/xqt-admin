@@ -21,6 +21,8 @@
                     :options="form.adOptions"
                     :props="adOptionProps"
                     change-on-select
+                    v-model="adSelectedOptions"
+                    @visible-change="handleAdCascaderVisible"
                     @change="handleAdCascaderChange">
                 </el-cascader>
             </el-form-item>
@@ -109,7 +111,6 @@
                                                     <div class="item">1元/次</div>
                                                 </el-row>
                                             </el-checkbox>
-
                                         </el-row>
                                     </el-checkbox-group>
 
@@ -151,8 +152,8 @@
 
 <script>
     import address from '../../../../../../static/area/address'
-    import { uploadImage } from "../../../../../api/common";
-    import { getClubTags, createAd, getSttId, getTargetType, getCityBlock, getAdType } from "../../../../../api/merchant";
+    import { uploadImage } from "@/api/common";
+    import { getClubTags, createAd, getSttId, getTargetType, getCityBlock, getAdType } from "@/api/merchant";
 
     const sexOptions = ['男', '女'];
     export default {
@@ -174,6 +175,7 @@
                     label: 'title',
                     children: 'list'
                 },
+                adSelectedOptions: [],
                 // currentAdOptionObj: {},
                 form: {
                     name: '',
@@ -218,8 +220,8 @@
         created: function () {
             // this.handleGetTargetType()
             this.handleGetAdType() //获取广告服务
-            this.getSttIdMehtod()
-            console.log(this.form.areaTags.length)
+            // this.getSttIdMehtod()
+            // console.log(this.form.areaTags.length)
         },
         methods: {
             // handleTargetTypeChange(v){
@@ -228,8 +230,15 @@
             //     this.handleGetCityBlock();
             // },
             handleGetCityBlock () {
+
+                if (this.form.options.length) {
+                    // 先清空之前的地区
+                    this.form.options = []
+                }
+
                 getCityBlock({target_id: this.targetId, target_type: this.targetType})
                     .then(res => {
+                        console.log(res)
                         if (res.result == 1) {
                             let options = {
                                     "value": res.data.type[0].area_id,
@@ -270,6 +279,7 @@
                     target_id: this.targetId,
                     target_type: this.targetType
                 }).then(res => {
+                    console.log(res)
                     if (res.result == 1) {
                         let d = []
                         res.data.type.forEach((v, i) => {
@@ -293,38 +303,65 @@
             },
             handleAdCascaderChange (item) {
 
+                this.adSelectedOptions = item //默认值通过数组方式指定
+
                 let myAdOptions = this.form.adOptions
 
-                if (item.length === 1 || item.length === 3) {
-                    this.$message({type: 'warning', message: '请选择具体类型'})
-                    return false
+                if (item.length === 1 || item.length === 3) return this.$message({type: 'warning', message: '请选择具体类型'})
+
+                let obj = {
+                    'target_id': '',
+                    'target_type': ''
                 }
 
                 let adObj = item.map((v, i) => {
 
-                    for (let itm of myAdOptions) {
-                        if (itm.title == v) {
-                            
-                            if (itm.list.length > 0) {
+                    // for (let itm of myAdOptions) {
+                    //     if (itm.title == v) {
+                    //         console.log(itm)
+                    //         // if (itm.list.length) {
+                    //         //     myAdOptions = itm.list
+                    //         // }
+                    //         // return itm
+                    //         obj.target_id = itm.target_id
+                    //         obj.target_type = itm.target_type
+                    //     }
+                    //     return obj
+                    // }
 
-                                myAdOptions = itm.list
-                            }
+                    myAdOptions.forEach((subObj, i) => {
 
-                            return itm
+                        if (subObj.title === v) {
+                            myAdOptions = subObj.list
+                            obj.target_id = subObj.target_id
+                            obj.target_type = subObj.target_type
+                            // console.log(obj)
                         }
-                    }
-                    return null
+                    })
+                    return obj
+                    
                 })
-                console.log(adObj)
-                if (adObj[1]) {
-                    this.targetId = adObj[1].target_id
-                    this.targetType = adObj[1].target_type
-                    this.handleGetCityBlock()
+                // console.log(adObj)
+   
+                if (adObj) {
+
+                    let myObj = adObj.splice(-1, 1)
+                    this.targetId = myObj[0]['target_id']
+                    this.targetType = myObj[0]['target_type']
+                    // console.log(this.targetId, this.targetType)
                 }
                 // this.handleGetCityBlock()
                 // let res = this.getCascaderObj(val, this.form.options),//this.getCascaderObj(val, address),
                 //     length = res.length;
                 // this.areaTagsCache =  {area_name: res[length - 1]['label'], area_id: res[length - 1]['value']}
+            },
+            handleAdCascaderVisible (boolean) {
+                // console.log(this.targetId, this.targetType)
+                if (!boolean) {
+                    this.handleGetCityBlock()
+                    this.getSttIdMehtod()
+                }
+                
             },
             handleAdTypeChange (item) {
                 item.forEach((val, i) => {
